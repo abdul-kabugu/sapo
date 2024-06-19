@@ -21,16 +21,20 @@ if(recoveredAddress !== address){
     res.status(constants.VALIDATION_ERROR).json({message : "invalid signature"})
 }
 
-const isAvailable = await User.findOne({address})
+//const isAvailable = await User.findOne({address})
+
+let user = await User.findOne({ address });
  
-if(! isAvailable){
-    const user = new User({address : address})
+if(! user){
+   // const user = new User({address : address})
+
+   user = new User({address : address });
     await user.save()
 }
 
- const token =  jwt.sign({id : address},  secretKey, {expiresIn : "1h"} )
+ const token =  jwt.sign({id : user._id},  secretKey, {expiresIn : "1h"} )
 
- res.json({token : token})
+ res.json({token : token, user : user})
 
  })
 
@@ -107,4 +111,47 @@ if(! isAvailable){
 
        res.status(200).send(user)
      })
- module.exports = {getNonce, verifyNonce, editProfile, followUser, getAllUsers, getUser}
+
+       const isFollowed =  asyncHanlder( async (req, res) =>  {
+        const {followerId, followedId} = req.params
+
+        const follower = await User.findById(followerId);
+        const followed = await User.findById(followedId);
+
+
+          if(!follower  || ! followed){
+            return res.status(constants.NOT_FOUND).send("user don't exist")
+          }
+        const isFollowing = followed.followers.includes(followerId);
+
+        res.status(200).json({isFollowing})
+
+       })
+
+
+       // Get total followers for a user
+const getUserFollowers = asyncHanlder(async (req, res) => {
+  const { userId } = req.params;
+  const user = await User.findById(userId).populate('followers', 'address avatar name');
+
+  if (user) {
+       res.json({ totalFollowers: user.followers.length, followers: user.followers });
+  } else {
+      res.status(404);
+      throw new Error('User not found');
+  }
+});
+
+       // Get total followers for a user
+       const getUserFollowing = asyncHanlder(async (req, res) => {
+        const { userId } = req.params;
+        const user = await User.findById(userId).populate('followers', 'address avatar name');
+      
+        if (user) {
+             res.json({ totalFollowers: user.following.length, followers: user.following });
+        } else {
+            res.status(404);
+            throw new Error('User not found');
+        }
+      });
+ module.exports = {getNonce, verifyNonce, editProfile, followUser, getAllUsers, getUser, isFollowed, getUserFollowers, getUserFollowing}

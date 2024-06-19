@@ -109,7 +109,7 @@ const Comment = require("../models/CommentModel")
      const {postId} = req.params
      const {content, userId} = req.body
 
-       if(! postId){
+       if(! postId || ! content){
         return res.status(constants.VALIDATION_ERROR).json({message : "add all information"})
        }
 
@@ -129,5 +129,34 @@ const Comment = require("../models/CommentModel")
 
      })
 
+     const isPostLiked = asyncHandler(async (req, res)  =>  {
+        const {postId, userId}  =  req.params
 
- module.exports = {createNewPost, getAllPosts, likePost, getPost, editPost, createComment}
+        const post = await Post.findById(postId);
+
+        if(! post)  {
+          return res.status(constants.NOT_FOUND).send("no post foound")
+        }
+
+        const isLiked = post.likes.includes(userId);
+
+        res.status(200).json({isLiked})
+        
+     })
+
+
+     // Get total likes for a post
+const getPostLikes = asyncHandler(async (req, res) => {
+  const { postId } = req.params;
+  const post = await Post.findById(postId).populate('likes', 'address avatar name');
+
+  if (post) {
+      res.json({ totalLikes: post.likes.length, likes: post.likes });
+  } else {
+      res.status(404);
+      throw new Error('Post not found');
+  }
+})
+
+
+ module.exports = {createNewPost, getAllPosts, likePost, getPost, editPost, createComment, isPostLiked, getPostLikes}

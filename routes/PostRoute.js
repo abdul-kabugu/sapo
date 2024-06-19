@@ -1,5 +1,5 @@
 const express = require("express");
-const { createNewPost, getAllPosts, likePost, getPost, editPost } = require("../controllers/PostController");
+const { createNewPost, getAllPosts, likePost, getPost, editPost, isPostLiked, getPostLikes } = require("../controllers/PostController");
 
 
 const  router  = express.Router();
@@ -14,7 +14,9 @@ router.route("/:postId").get(getPost)
 
 router.route("/:postId/edit").put(editPost)
 
-//router.route("/profile/:profileId/follow").post()
+router.route("/ispost-liked/:postId/:userId/").get(isPostLiked)
+
+router.route("/post-likes/:postId").get(getPostLikes)
 
 
 
