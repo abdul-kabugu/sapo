@@ -7,7 +7,7 @@ const Comment = require("../models/CommentModel")
 
  const createNewPost =   asyncHandler(async (req, res)  =>  {
 
-    const {author, content, media, tags, appId, category, title } = req.body
+    const {author, content, media, tags, appId, category, title, thumbnail  } = req.body
 
     if(! author || ! content){
         res.status(constants.VALIDATION_ERROR).json({message : "Fill all informtion"})
@@ -20,7 +20,8 @@ const Comment = require("../models/CommentModel")
     tags,
     appId,
     category,
-   title
+   title,
+   thumbnail 
   })
 
   await newPost.save()

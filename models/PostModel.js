@@ -9,6 +9,7 @@ const postSchema = new mongoose.Schema({
     category : [{type : String}],
     appId : {type : String},
     title : {type : String},
+    thumbnail :{type : String},
   /* comments: [{
         author: { type: String, required: true }, // User's address
         content: { type: String, required: true },
