@@ -38,5 +38,18 @@ const { constants } = require("../constants")
     res.status(200).send(tokens)
   })
 
+  // Get social tokens for a specific user (creator)
+const getUserTokens = asyncHandler(async (req, res) => {
+   const { userId} = req.params;
+   const tokens = await Token.find({creator : userId }).populate('creatorId', 'address name avatar');
 
-  module.exports =  {getAllTokens, saveToken}
+   if (tokens) {
+       res.json(tokens);
+   } else {
+       res.status(404);
+       throw new Error('Tokens not found for this user');
+   }
+});
+
+
+  module.exports =  {getAllTokens, saveToken, getUserTokens}

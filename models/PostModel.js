@@ -5,6 +5,10 @@ const postSchema = new mongoose.Schema({
     content: { type: String, required: true },
     media: { type: String }, // IPFS hash or media URL
     likes: [{ type: String }], // List of user addresses
+    tags : [{type : String}],
+    category : [{type : String}],
+    appId : {type : String},
+    title : {type : String},
   /* comments: [{
         author: { type: String, required: true }, // User's address
         content: { type: String, required: true },
