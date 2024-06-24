@@ -81,7 +81,7 @@ const Comment = require("../models/CommentModel")
 
       const post = await Post.findById(postId)
 
-      res.sendStatus(200).send(post)
+      res.status(200).send(post)
 
     })
 
